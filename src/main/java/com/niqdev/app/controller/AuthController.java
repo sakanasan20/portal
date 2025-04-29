@@ -31,7 +31,7 @@ public class AuthController {
             String accessToken = client.getAccessToken().getTokenValue();
             
             String result = webClient.get()
-                    .uri("http://localhost:8082/api/jwt")
+                    .uri("http://localhost:8081/api/jwt")
                     .header("Authorization", "Bearer " + accessToken)
                     .retrieve()
                     .bodyToMono(String.class)
@@ -56,7 +56,7 @@ public class AuthController {
             String accessToken = client.getAccessToken().getTokenValue();
             
             String result = webClient.get()
-                    .uri("http://localhost:8082/api/user")
+                    .uri("http://localhost:8081/api/user")
                     .header("Authorization", "Bearer " + accessToken)
                     .retrieve()
                     .bodyToMono(String.class)
@@ -81,7 +81,7 @@ public class AuthController {
             String accessToken = client.getAccessToken().getTokenValue();
             
             String result = webClient.get()
-                    .uri("http://localhost:8082/api/roles")
+                    .uri("http://localhost:8081/api/roles")
                     .header("Authorization", "Bearer " + accessToken)
                     .retrieve()
                     .bodyToMono(String.class)
