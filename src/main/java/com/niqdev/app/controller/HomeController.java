@@ -45,4 +45,25 @@ public class HomeController {
     	
         return "home";
     }
+    
+    @GetMapping("/profile")
+    public String profileFragment(Model model) {
+        // 加入你要的資料
+        return "profile";
+    }
+    
+    @GetMapping("/admin-page")
+    public String adminFragment() {
+        return "admin";
+    }
+
+    @GetMapping("/api-test")
+    public String apiTestFragment() {
+        return "api-test";
+    }
+
+    @GetMapping("/license")
+    public String licenseFragment() {
+        return "license";
+    }
 }
