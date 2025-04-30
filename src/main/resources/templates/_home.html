@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<title>Portal Home</title>
+</head>
+<body>
+	<h1>Welcome to the Portal</h1>
+
+	<div th:if="${#authorization.expression('isAuthenticated()')}">
+		<p>
+			You are logged in as <b th:text="${#authentication.name}"></b>
+		</p>
+
+		<p>Your roles:</p>
+		<ul>
+			<li th:each="r : ${roles}" th:text="${r}"></li>
+		</ul>
+
+		<p>
+			Access Token (exp: <span th:text="${expiresAt}"></span>)
+		</p>
+		<pre th:text="${accessToken}"></pre>
+		
+		<p>
+			<a href="/getApiJwt">Get API JWT</a> | 
+			<a href="/getApiUser">Get API User</a> | 
+			<a href="/getApiRoles">Get API Roles</a> | 
+			<a href="/register-feature-key-form">Register Feature Key</a> | 
+			<a href="/find-feature-key-form">Find Feature Key</a> | 
+			<a href="/register-license-key-form">Register License Key</a> | 
+			<a href="/find-license-key-form">Find License Key</a>
+		</p>
+
+		<form th:action="@{/logout}" method="post">
+			<button type="submit" onclick="return confirm('Are you sure you want to log out?')">Logout</button>
+		</form>
+	</div>
+
+	<div th:if="${!#authorization.expression('isAuthenticated()')}">
+		<a th:href="@{/oauth2/authorization/my-client}">
+			<button>Login with OAuth2</button>
+		</a>
+	</div>
+</body>
+</html>

@@ -12,15 +12,17 @@ public class SecurityConfig {
     SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
             .authorizeHttpRequests(auth -> auth
+					.requestMatchers("/resources/**", "/webjars/**", "/css/**", "/js/**", "/img/**").permitAll()
             		.requestMatchers("/").permitAll()
-            		.anyRequest().authenticated())
-            .oauth2Login(oauth2 -> oauth2.defaultSuccessUrl("/", true))
+            		.anyRequest().authenticated()
+            	)
             .logout(logout -> logout
                     .logoutSuccessHandler((request, response, authentication) -> {
                         // 這裡是 Redirect 登出到授權伺服器的 logout URL
                         response.sendRedirect("http://localhost:8081/oidc/logout?post_logout_redirect_uri=http://localhost:8080/");
                     })
-        		);
+        		)
+            .oauth2Login(oauth2 -> oauth2.defaultSuccessUrl("/", true));
         return http.build();
     }
 }

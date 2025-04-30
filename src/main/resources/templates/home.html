@@ -1,46 +1,118 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html lang="zh-Hant" 
+	xmlns:th="http://www.thymeleaf.org"
+	xmlns:sec="https://www.thymeleaf.org/extras/spring-security">
 <head>
-<meta charset="UTF-8">
-<title>Portal Home</title>
+	<meta charset="UTF-8">
+	<title>Portal Home</title>
+	<link rel="stylesheet" th:href="@{/webjars/bootstrap/5.3.3/dist/css/bootstrap.min.css}">
+	<link rel="stylesheet" th:href="@{/webjars/bootstrap-icons/1.11.3/font/bootstrap-icons.min.css}">
+	<link rel="stylesheet" th:href="@{/webjars/bootstrap-table/1.23.5/dist/bootstrap-table.min.css}">
 </head>
 <body>
-	<h1>Welcome to the Portal</h1>
 
-	<div th:if="${#authorization.expression('isAuthenticated()')}">
-		<p>
-			You are logged in as <b th:text="${#authentication.name}"></b>
-		</p>
-
-		<p>Your roles:</p>
-		<ul>
-			<li th:each="r : ${roles}" th:text="${r}"></li>
-		</ul>
-
-		<p>
-			Access Token (exp: <span th:text="${expiresAt}"></span>)
-		</p>
-		<pre th:text="${accessToken}"></pre>
-		
-		<p>
-			<a href="/getApiJwt">Get API JWT</a> | 
-			<a href="/getApiUser">Get API User</a> | 
-			<a href="/getApiRoles">Get API Roles</a> | 
-			<a href="/register-feature-key-form">Register Feature Key</a> | 
-			<a href="/find-feature-key-form">Find Feature Key</a> | 
-			<a href="/register-license-key-form">Register License Key</a> | 
-			<a href="/find-license-key-form">Find License Key</a>
-		</p>
-
-		<form th:action="@{/logout}" method="post">
-			<button type="submit" onclick="return confirm('Are you sure you want to log out?')">Logout</button>
-		</form>
+	<!-- Navbar -->
+	<nav class="navbar navbar-expand-lg navbar-dark bg-dark px-4">
+		<a class="navbar-brand" href="#">My Portal</a>
+		<div class="ms-auto">
+			<div sec:authorize="isAnonymous()">
+				<a th:href="@{/oauth2/authorization/my-client}" class="btn btn-outline-light">登入</a>
+			</div>
+			<div sec:authorize="isAuthenticated()">
+				<span class="text-white me-2">歡迎，<span sec:authentication="name"></span></span>
+				<button type="button" class="btn btn-outline-light"
+					data-bs-toggle="modal" data-bs-target="#logoutModal">登出</button>
+			</div>
+		</div>
+	</nav>
+	
+	<!-- Logout Modal -->
+	<div class="modal fade" id="logoutModal" tabindex="-1"
+		aria-labelledby="logoutModalLabel" aria-hidden="true">
+		<div class="modal-dialog modal-dialog-centered">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title" id="logoutModalLabel">確認登出</h5>
+					<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="關閉"></button>
+				</div>
+				<div class="modal-body">您確定要登出嗎？</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
+					<form th:action="@{/logout}" method="post">
+						<input type="hidden" name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+						<button type="submit" class="btn btn-danger">確認登出</button>
+					</form>
+				</div>
+			</div>
+		</div>
 	</div>
 
-	<div th:if="${!#authorization.expression('isAuthenticated()')}">
-		<a th:href="@{/oauth2/authorization/my-client}">
-			<button>Login with OAuth2</button>
-		</a>
-	</div>
+	<!-- Hero Section -->
+	<header class="bg-primary text-white text-center py-5">
+		<!-- 未登入時顯示 -->
+		<div sec:authorize="isAnonymous()">
+			<h1 class="display-4">歡迎來到入口網站</h1>
+			<p class="lead">透過單一登入存取多個服務，享受簡潔一致的使用體驗。</p>
+			<a th:href="@{/oauth2/authorization/my-client}" class="btn btn-light btn-lg mt-3">立即登入</a>
+		</div>
+
+		<!-- 已登入時顯示 -->
+		<div sec:authorize="isAuthenticated()">
+			<h1 class="display-4">
+				歡迎回來！<span sec:authentication="name"></span>
+			</h1>
+			<p class="lead">您已成功登入，請選擇下方功能開始操作。</p>
+			<a href="/profile" class="btn btn-light btn-lg mt-3 me-2">前往個人資料</a>
+		</div>
+	</header>
+
+	<!-- Main Content -->
+	<main class="container my-5">
+		<h2 class="mb-4 text-center">可用資源</h2>
+		<div class="row row-cols-1 row-cols-md-3 g-4">
+
+			<div class="col">
+				<div class="card h-100 shadow-sm">
+					<div class="card-body">
+						<h5 class="card-title">用戶資訊</h5>
+						<p class="card-text">查詢登入用戶資訊與權限。</p>
+						<a href="/profile" class="btn btn-primary">前往</a>
+					</div>
+				</div>
+			</div>
+
+			<div class="col">
+				<div class="card h-100 shadow-sm">
+					<div class="card-body">
+						<h5 class="card-title">API 測試頁</h5>
+						<p class="card-text">使用 Access Token 存取保護資源。</p>
+						<a href="/api-test" class="btn btn-primary">前往</a>
+					</div>
+				</div>
+			</div>
+
+			<div class="col">
+				<div class="card h-100 shadow-sm">
+					<div class="card-body">
+						<h5 class="card-title">License 中心</h5>
+						<p class="card-text">註冊與查詢 License 與模組。</p>
+						<a href="/license" class="btn btn-primary">前往</a>
+					</div>
+				</div>
+			</div>
+
+		</div>
+	</main>
+
+	<!-- Footer -->
+	<footer class="bg-dark text-white text-center py-3"> &copy; 2025 My Portal. All rights reserved. </footer>
+	
+	<script th:src="@{/webjars/bootstrap/5.3.3/dist/js/bootstrap.bundle.min.js}"></script>
+	<script th:src="@{/webjars/jquery/3.7.1/dist/jquery.min.js}"></script>
+	<script th:src="@{/webjars/jquery-validation/1.20.0/jquery.validate.min.js}"></script>
+	<script th:src="@{/webjars/bootstrap-table/1.23.5/dist/bootstrap-table.min.js}"></script>
+	<script th:src="@{/webjars/bootstrap-table/1.23.5/dist/bootstrap-table-locale-all.min.js}"></script>
+	<script th:src="@{/js/scripts.js}"></script>
+	
 </body>
 </html>
