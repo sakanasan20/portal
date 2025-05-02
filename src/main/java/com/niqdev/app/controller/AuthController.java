@@ -18,7 +18,7 @@ public class AuthController {
 	@Autowired
     private OAuth2AuthorizedClientService authorizedClientService;
     
-    @GetMapping("/getApiJwt")
+    @GetMapping("/get-api-jwt")
     public String getApiJwt(Model model, OAuth2AuthenticationToken authentication) {
     	
     	OAuth2AuthorizedClient client = null;
@@ -43,7 +43,7 @@ public class AuthController {
         return "api-result";
     }
     
-    @GetMapping("/getApiUser")
+    @GetMapping("/get-api-user")
     public String getApiUser(Model model, OAuth2AuthenticationToken authentication) {
     	
     	OAuth2AuthorizedClient client = null;
@@ -68,7 +68,7 @@ public class AuthController {
         return "api-result";
     }
     
-    @GetMapping("/getApiRoles")
+    @GetMapping("/get-api-roles")
     public String getApiRoles(Model model, OAuth2AuthenticationToken authentication) {
     	
     	OAuth2AuthorizedClient client = null;

@@ -8,7 +8,28 @@
 			<i class="bi bi-arrow-left"></i> 返回首頁
 		</button>
 
-		<h2>用戶資訊</h2>
-		<p>這是用戶資訊的主內容。</p>
+		<h2 class="mb-4">個人檔案</h2>
+
+		<div class="card shadow-sm">
+			<div class="card-body">
+				<h5 class="card-title">使用者資訊</h5>
+				<dl class="row">
+					<dt class="col-sm-3">帳號</dt>
+					<dd class="col-sm-9" id="profile-username" th:text="${#authentication.name}">載入中...</dd>
+
+					<dt class="col-sm-3">Email</dt>
+					<dd class="col-sm-9" id="profile-email" th:text="${email}">載入中...</dd>
+
+					<dt class="col-sm-3">加入時間</dt>
+					<dd class="col-sm-9" id="profile-created" th:text="${createAt}">載入中...</dd>
+
+					<dt class="col-sm-3">角色</dt>
+					<dd class="col-sm-9" id="profile-roles" th:text="${roles}">載入中...</dd>
+
+					<dt class="col-sm-3">權限</dt>
+					<dd class="col-sm-9" id="profile-authorities" th:text="${authorities}">載入中...</dd>
+				</dl>
+			</div>
+		</div>
 	</div>
 </body>
