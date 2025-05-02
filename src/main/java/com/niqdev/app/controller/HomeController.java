@@ -60,11 +60,6 @@ public class HomeController {
     	model.addAttribute("authorities", roles.stream().filter(role -> !role.startsWith("ROLE_")).toList());
         return "profile";
     }
-    
-    @GetMapping("/admin-page")
-    public String adminFragment() {
-        return "admin";
-    }
 
     @GetMapping("/api-test")
     public String apiTestFragment() {
