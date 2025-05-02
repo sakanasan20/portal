@@ -1,4 +1,4 @@
-package com.niqdev.app.dto;
+package com.niqdev.app.dto.role;
 
 import java.util.Set;
 

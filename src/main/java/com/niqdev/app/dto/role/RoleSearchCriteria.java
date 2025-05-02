@@ -1,4 +1,4 @@
-package com.niqdev.app.dto;
+package com.niqdev.app.dto.role;
 
 import java.time.LocalDateTime;
 
@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class AuthoritySearchCriteria {
+public class RoleSearchCriteria {
     private String name;
     private String description;
     private LocalDateTime createdAtFrom;

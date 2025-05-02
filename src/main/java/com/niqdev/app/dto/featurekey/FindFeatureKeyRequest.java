@@ -1,4 +1,4 @@
-package com.niqdev.app.dto;
+package com.niqdev.app.dto.featurekey;
 
 import java.time.LocalDateTime;
 import java.util.Set;

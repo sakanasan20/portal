@@ -1,4 +1,4 @@
-package com.niqdev.app.dto;
+package com.niqdev.app.dto.licensekey;
 
 import java.time.LocalDateTime;
 

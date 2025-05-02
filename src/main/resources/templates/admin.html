@@ -51,9 +51,20 @@
 						<tr>
 							<th>角色名稱</th>
 							<th>權限</th>
+							<th>描述</th>
 						</tr>
 					</thead>
-					<tbody></tbody>
+					<tbody>
+						<tr th:each="role : ${roles}">
+							<td th:text="${role.name}"></td>
+							<td>
+								<span th:each="authority : ${role.authorities}"
+									class="badge bg-primary me-1" 
+									th:text="${authority.name}"></span>
+							</td>
+							<td th:text="${role.description}"></td>
+						</tr>
+					</tbody>
 				</table>
 			</div>
 
@@ -65,7 +76,12 @@
 							<th>描述</th>
 						</tr>
 					</thead>
-					<tbody></tbody>
+					<tbody>
+						<tr th:each="authority : ${authorities}">
+							<td th:text="${authority.name}"></td>
+							<td th:text="${authority.description}"></td>
+						</tr>
+					</tbody>
 				</table>
 			</div>
 		</div>

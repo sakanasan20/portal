@@ -1,4 +1,4 @@
-package com.niqdev.app.dto;
+package com.niqdev.app.dto.licensekey;
 
 import java.time.LocalDateTime;
 
@@ -18,7 +18,8 @@ import lombok.ToString;
 @ToString
 @NoArgsConstructor
 @AllArgsConstructor
-public class RegisterLicenseKeyRequest {
+public class FindLicenseKeyRequest {
+	private String licenseKey;
     private String licenseName;        // License 的名字，例如公司名
     private LocalDateTime expirationTime; // License 有效期限
     private Integer maxDevices;        // 最多允許幾台裝置使用

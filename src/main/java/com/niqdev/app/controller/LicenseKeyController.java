@@ -7,9 +7,9 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 
-import com.niqdev.app.dto.FindLicenseKeyForm;
-import com.niqdev.app.dto.LicenseKeyDto;
-import com.niqdev.app.dto.RegisterLicenseKeyForm;
+import com.niqdev.app.dto.licensekey.FindLicenseKeyForm;
+import com.niqdev.app.dto.licensekey.LicenseKeyDto;
+import com.niqdev.app.dto.licensekey.RegisterLicenseKeyForm;
 import com.niqdev.app.service.LicenseKeyClientService;
 
 import lombok.RequiredArgsConstructor;

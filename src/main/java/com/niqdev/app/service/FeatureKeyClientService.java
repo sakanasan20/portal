@@ -7,11 +7,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 
 import com.niqdev.app.converter.FeatureKeyConverter;
-import com.niqdev.app.dto.FeatureKeyDto;
-import com.niqdev.app.dto.FindFeatureKeyForm;
-import com.niqdev.app.dto.FindFeatureKeyRequest;
-import com.niqdev.app.dto.RegisterFeatureKeyForm;
-import com.niqdev.app.dto.RegisterFeatureKeyRequest;
+import com.niqdev.app.dto.featurekey.FeatureKeyDto;
+import com.niqdev.app.dto.featurekey.FindFeatureKeyForm;
+import com.niqdev.app.dto.featurekey.FindFeatureKeyRequest;
+import com.niqdev.app.dto.featurekey.RegisterFeatureKeyForm;
+import com.niqdev.app.dto.featurekey.RegisterFeatureKeyRequest;
 import com.niqdev.app.exception.WebClientErrorHandler;
 
 import lombok.RequiredArgsConstructor;

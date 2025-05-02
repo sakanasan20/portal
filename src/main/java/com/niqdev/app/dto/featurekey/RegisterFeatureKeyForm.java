@@ -1,4 +1,4 @@
-package com.niqdev.app.dto;
+package com.niqdev.app.dto.featurekey;
 
 import org.springframework.format.annotation.DateTimeFormat;
 

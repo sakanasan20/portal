@@ -4,10 +4,10 @@ import java.time.LocalDateTime;
 
 import org.springframework.stereotype.Component;
 
-import com.niqdev.app.dto.FindLicenseKeyForm;
-import com.niqdev.app.dto.FindLicenseKeyRequest;
-import com.niqdev.app.dto.RegisterLicenseKeyForm;
-import com.niqdev.app.dto.RegisterLicenseKeyRequest;
+import com.niqdev.app.dto.licensekey.FindLicenseKeyForm;
+import com.niqdev.app.dto.licensekey.FindLicenseKeyRequest;
+import com.niqdev.app.dto.licensekey.RegisterLicenseKeyForm;
+import com.niqdev.app.dto.licensekey.RegisterLicenseKeyRequest;
 
 @Component
 public class LicenseKeyConverter {

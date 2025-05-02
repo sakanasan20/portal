@@ -1,4 +1,4 @@
-package com.niqdev.app.dto;
+package com.niqdev.app.dto.licensekey;
 
 import org.springframework.format.annotation.DateTimeFormat;
 
@@ -15,9 +15,7 @@ import lombok.ToString;
 @AllArgsConstructor
 @ToString
 @Builder
-public class FindLicenseKeyForm {
-	
-	private String licenseKey;
+public class RegisterLicenseKeyForm {
 	
     private String licenseName;
     

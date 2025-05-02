@@ -5,10 +5,10 @@ import java.util.Set;
 
 import org.springframework.stereotype.Component;
 
-import com.niqdev.app.dto.FindFeatureKeyForm;
-import com.niqdev.app.dto.FindFeatureKeyRequest;
-import com.niqdev.app.dto.RegisterFeatureKeyForm;
-import com.niqdev.app.dto.RegisterFeatureKeyRequest;
+import com.niqdev.app.dto.featurekey.FindFeatureKeyForm;
+import com.niqdev.app.dto.featurekey.FindFeatureKeyRequest;
+import com.niqdev.app.dto.featurekey.RegisterFeatureKeyForm;
+import com.niqdev.app.dto.featurekey.RegisterFeatureKeyRequest;
 
 @Component
 public class FeatureKeyConverter {

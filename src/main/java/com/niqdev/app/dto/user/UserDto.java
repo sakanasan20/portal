@@ -1,7 +1,9 @@
-package com.niqdev.app.dto;
+package com.niqdev.app.dto.user;
 
 import java.time.LocalDateTime;
 import java.util.Set;
+
+import com.niqdev.app.dto.role.RoleDto;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -14,11 +16,15 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class RoleDto {
+public class UserDto {
     private Long id;
-    private String name;
-    private String description;
-    private Set<AuthorityDto> authorities;
+    private String username;
+    private String email;
+    private boolean accountNonExpired;
+    private boolean accountNonLocked;
+    private boolean credentialsNonExpired;
+    private boolean enabled;
+    private Set<RoleDto> roles;
     private LocalDateTime createdAt;
     private String createdBy;
     private LocalDateTime updatedAt;

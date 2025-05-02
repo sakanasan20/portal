@@ -7,11 +7,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 
 import com.niqdev.app.converter.LicenseKeyConverter;
-import com.niqdev.app.dto.FindLicenseKeyForm;
-import com.niqdev.app.dto.FindLicenseKeyRequest;
-import com.niqdev.app.dto.LicenseKeyDto;
-import com.niqdev.app.dto.RegisterLicenseKeyForm;
-import com.niqdev.app.dto.RegisterLicenseKeyRequest;
+import com.niqdev.app.dto.licensekey.FindLicenseKeyForm;
+import com.niqdev.app.dto.licensekey.FindLicenseKeyRequest;
+import com.niqdev.app.dto.licensekey.LicenseKeyDto;
+import com.niqdev.app.dto.licensekey.RegisterLicenseKeyForm;
+import com.niqdev.app.dto.licensekey.RegisterLicenseKeyRequest;
 import com.niqdev.app.exception.WebClientErrorHandler;
 
 import lombok.RequiredArgsConstructor;

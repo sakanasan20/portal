@@ -7,9 +7,9 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 
-import com.niqdev.app.dto.FeatureKeyDto;
-import com.niqdev.app.dto.FindFeatureKeyForm;
-import com.niqdev.app.dto.RegisterFeatureKeyForm;
+import com.niqdev.app.dto.featurekey.FeatureKeyDto;
+import com.niqdev.app.dto.featurekey.FindFeatureKeyForm;
+import com.niqdev.app.dto.featurekey.RegisterFeatureKeyForm;
 import com.niqdev.app.service.FeatureKeyClientService;
 
 import lombok.RequiredArgsConstructor;

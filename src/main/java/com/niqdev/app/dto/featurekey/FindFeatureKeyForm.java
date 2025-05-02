@@ -1,4 +1,4 @@
-package com.niqdev.app.dto;
+package com.niqdev.app.dto.featurekey;
 
 import org.springframework.format.annotation.DateTimeFormat;
 
@@ -15,12 +15,12 @@ import lombok.ToString;
 @AllArgsConstructor
 @ToString
 @Builder
-public class RegisterLicenseKeyForm {
+public class FindFeatureKeyForm {
 	
-    private String licenseName;
-    
+	private String kid;
+	
+	private String modules;
+	
 	@DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
 	private String expirationTime;
-	
-    private String maxDevices;
 }
