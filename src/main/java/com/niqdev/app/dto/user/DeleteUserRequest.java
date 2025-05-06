@@ -1,4 +1,4 @@
-package com.niqdev.app.dto.authority;
+package com.niqdev.app.dto.user;
 
 import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
@@ -10,10 +10,11 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class CreateAuthorityRequest {
+public class DeleteUserRequest {
 
+	@NotBlank
+	private Long id;
+    
     @NotBlank
-    private String name;
-
-    private String description;
+    private String username;
 }

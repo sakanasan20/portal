@@ -1,6 +1,15 @@
 package com.niqdev.app.converter;
 
+import java.util.stream.Collectors;
+
 import org.springframework.stereotype.Component;
+
+import com.niqdev.app.dto.user.CreateUserForm;
+import com.niqdev.app.dto.user.CreateUserRequest;
+import com.niqdev.app.dto.user.DeleteUserForm;
+import com.niqdev.app.dto.user.DeleteUserRequest;
+import com.niqdev.app.dto.user.UpdateUserForm;
+import com.niqdev.app.dto.user.UpdateUserRequest;
 
 import lombok.RequiredArgsConstructor;
 
@@ -8,91 +17,36 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class UserConverter {
 
-//    private final RoleRepository roleRepository; // 用來查詢角色
-//    private final RoleConverter roleConverter;
-//    private final PasswordEncoder passwordEncoder;
-//
-//    public UserDto toDto(User user) {
-//        if (user == null) return null;
-//        return new UserDto(
-//            user.getId(),
-//            user.getUsername(),
-//            user.getEmail(),
-//            user.isEnabled(),
-//            user.isAccountNonLocked(),
-//            user.isAccountNonExpired(),
-//            user.isCredentialsNonExpired(),
-//            user.getRoles().stream()
-//                .map(roleConverter::toDto)
-//                .collect(Collectors.toSet()),
-//            user.getCreatedAt(),
-//            user.getCreatedBy(),
-//            user.getUpdatedAt(),
-//            user.getUpdatedBy()
-//        );
-//    }
-//
-//    public User toEntity(UserDto dto) {
-//        if (dto == null) return null;
-//
-//        return User.builder()
-//                .id(dto.getId())
-//                .username(dto.getUsername())
-//                .email(dto.getEmail())
-//                .enabled(dto.isEnabled())
-//                .accountNonLocked(dto.isAccountNonLocked())
-//                .accountNonExpired(dto.isAccountNonExpired())
-//                .credentialsNonExpired(dto.isCredentialsNonExpired())
-//                .roles(dto.getRoles() != null
-//                        ? dto.getRoles().stream()
-//                            .map(roleConverter::toEntity)
-//                            .collect(Collectors.toSet())
-//                        : null)
-//                .createdAt(dto.getCreatedAt())
-//                .createdBy(dto.getCreatedBy())
-//                .updatedAt(dto.getUpdatedAt())
-//                .updatedBy(dto.getUpdatedBy())
-//                .build();
-//    }
-//    
-//    public User fromCreateRequest(CreateUserRequest request) {
-//        return User.builder()
-//                .username(request.getUsername())
-//                .password(passwordEncoder.encode(request.getPassword()))
-//                .email(request.getEmail())
-//                .enabled(true)
-//                .accountNonLocked(true)
-//                .accountNonExpired(true)
-//                .credentialsNonExpired(true)
-//                .roles(findRolesByIds(request.getRoleIds()))
-//                .build();
-//    }
-//    
-//
-//    public User fromUpdateRequest(User user, UpdateUserRequest request) {
-//        if (request.getUsername() != null) user.setUsername(request.getUsername());
-//        if (request.getEmail() != null) user.setEmail(request.getEmail());
-//        if (request.getEnabled() != null) user.setEnabled(request.getEnabled());
-//        if (request.getAccountNonLocked() != null) user.setAccountNonLocked(request.getAccountNonLocked());
-//        if (request.getAccountNonExpired() != null) user.setAccountNonExpired(request.getAccountNonExpired());
-//        if (request.getCredentialsNonExpired() != null) user.setCredentialsNonExpired(request.getCredentialsNonExpired());
-//        if (request.getRoleIds() != null) user.setRoles(findRolesByIds(request.getRoleIds()));
-//        return user;
-//    }
-//    
-//    public User fromReplaceRequest(ReplaceUserRequest request, User existingUser) {
-//        existingUser.setUsername(request.getUsername());
-//        existingUser.setEmail(request.getEmail());
-//        existingUser.setEnabled(Boolean.TRUE.equals(request.getEnabled()));
-//        existingUser.setAccountNonLocked(Boolean.TRUE.equals(request.getAccountNonLocked()));
-//        existingUser.setAccountNonExpired(Boolean.TRUE.equals(request.getAccountNonExpired()));
-//        existingUser.setCredentialsNonExpired(Boolean.TRUE.equals(request.getCredentialsNonExpired()));
-//        existingUser.setRoles(findRolesByIds(request.getRoleIds()));
-//        return existingUser;
-//    }
-//    
-//    private Set<Role> findRolesByIds(Set<Long> roleIds) {
-//        if (roleIds == null || roleIds.isEmpty()) return Collections.emptySet();
-//        return new HashSet<>(roleRepository.findAllById(roleIds));
-//    }
+    public CreateUserRequest toCreateUserRequest(CreateUserForm formData) {
+        return CreateUserRequest.builder()
+                .username(formData.getUsername())
+                .password(formData.getPassword())
+                .email(formData.getEmail())
+                .roleIds(formData.getRoleIds() != null
+                		? formData.getRoleIds().stream()
+                				.map(Long::parseLong)
+                				.collect(Collectors.toSet())
+                		: null)
+                .build();
+    }
+    
+    public UpdateUserRequest toUpdateUserRequest(UpdateUserForm formData) {
+    	return UpdateUserRequest.builder()
+    			.id(Long.parseLong(formData.getId()))
+                .username(formData.getUsername())
+                .email(formData.getEmail())
+                .roleIds(formData.getRoleIds() != null
+                		? formData.getRoleIds().stream()
+                				.map(Long::parseLong)
+                				.collect(Collectors.toSet())
+                		: null)
+    			.build();
+    }
+
+	public DeleteUserRequest toDeleteUserRequest(DeleteUserForm formData) {
+    	return DeleteUserRequest.builder()
+    			.id(Long.parseLong(formData.getId()))
+                .username(formData.getUsername())
+    			.build();
+	}
 }

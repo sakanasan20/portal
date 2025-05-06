@@ -1,12 +1,19 @@
 package com.niqdev.app.dto.authority;
 
 import jakarta.validation.constraints.NotBlank;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
-@Getter
-@Setter
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class UpdateAuthorityRequest {
+	
+	@NotBlank
+	private Long id;
 
     @NotBlank
     private String name;

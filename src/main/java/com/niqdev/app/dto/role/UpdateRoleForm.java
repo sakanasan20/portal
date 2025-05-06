@@ -1,4 +1,6 @@
-package com.niqdev.app.dto.authority;
+package com.niqdev.app.dto.role;
+
+import java.util.Set;
 
 import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
@@ -10,10 +12,15 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class CreateAuthorityRequest {
+public class UpdateRoleForm {
+	
+	@NotBlank
+	private String id;
 
     @NotBlank
     private String name;
 
     private String description;
+    
+    private Set<String> authorityIds;
 }

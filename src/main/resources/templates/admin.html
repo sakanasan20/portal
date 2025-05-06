@@ -3,12 +3,12 @@
 	xmlns:sec="https://www.thymeleaf.org/extras/spring-security">
 <body>
 	<div class="container my-5">
-		<button class="btn btn-secondary mb-3 back-home-btn">
-			<i class="bi bi-arrow-left"></i> 返回首頁
-		</button>
-
-		<h2 class="mb-4">系統管理</h2>
-
+		<div class="d-flex justify-content-between align-items-center mb-4">
+			<h2>系統管理</h2>
+			<button class="btn btn-secondary mb-3 back-home-btn">
+				<i class="bi bi-arrow-left"></i> 返回首頁
+			</button>
+		</div>
 		<ul class="nav nav-tabs mb-3" id="adminTabs" role="tablist">
 			<li class="nav-item" role="presentation">
 				<button class="nav-link active" data-bs-toggle="tab" data-bs-target="#users-tab" type="button">用戶</button>
@@ -17,18 +17,21 @@
 				<button class="nav-link" data-bs-toggle="tab" data-bs-target="#roles-tab" type="button">角色</button>
 			</li>
 			<li class="nav-item" role="presentation">
-				<button class="nav-link" data-bs-toggle="tab" data-bs-target="#auth-tab" type="button">權限</button>
+				<button class="nav-link" data-bs-toggle="tab" data-bs-target="#authorities-tab" type="button">權限</button>
 			</li>
 		</ul>
 
 		<div class="tab-content">
+			<!-- 用戶 Tab -->
 			<div class="tab-pane fade show active" id="users-tab">
+				<button class="btn btn-primary mb-3" data-bs-toggle="modal" data-bs-target="#createUserModal">新增用戶</button>
 				<table class="table table-bordered" id="user-table">
 					<thead>
 						<tr>
 							<th>帳號</th>
 							<th>Email</th>
 							<th>角色</th>
+							<th>操作</th>
 						</tr>
 					</thead>
 					<tbody>
@@ -40,18 +43,37 @@
 									class="badge bg-primary me-1" 
 									th:text="${role.name}"></span>
 							</td>
+							<td>
+								<button class="btn btn-warning btn-sm update-user-btn"
+									th:data-id="${user.id}" 
+									th:data-username="${user.username}"
+									th:data-email="${user.email}" 
+									th:data-roles="${user.roles}"
+									data-bs-toggle="modal" 
+									data-bs-target="#updateUserModal">
+									修改</button>
+								<button class="btn btn-danger btn-sm delete-user-btn"
+									th:data-id="${user.id}"
+									th:data-username="${user.username}"
+									data-bs-toggle="modal" 
+									data-bs-target="#confirmDeleteUserModal">
+									刪除</button>
+							</td>
 						</tr>
 					</tbody>
 				</table>
 			</div>
 
+			<!-- 角色 Tab -->
 			<div class="tab-pane fade" id="roles-tab">
+				<button class="btn btn-primary mb-3" data-bs-toggle="modal" data-bs-target="#createRoleModal">新增角色</button>
 				<table class="table table-bordered" id="role-table">
 					<thead>
 						<tr>
 							<th>角色名稱</th>
 							<th>權限</th>
 							<th>描述</th>
+							<th>操作</th>
 						</tr>
 					</thead>
 					<tbody>
@@ -63,27 +85,513 @@
 									th:text="${authority.name}"></span>
 							</td>
 							<td th:text="${role.description}"></td>
+							<td>
+								<button class="btn btn-warning btn-sm update-role-btn" 
+									th:data-id="${role.id}" 
+									th:data-name="${role.name}" 
+									th:data-description="${role.description}"
+									th:data-authorities="${role.authorities}"
+									data-bs-toggle="modal"
+									data-bs-target="#updateRoleModal">
+									修改</button>
+								<button class="btn btn-danger btn-sm delete-role-btn"
+									th:data-id="${role.id}"
+									th:data-name="${role.name}"
+									data-bs-toggle="modal" 
+									data-bs-target="#confirmDeleteRoleModal">
+									刪除</button>
+							</td>
 						</tr>
 					</tbody>
 				</table>
 			</div>
 
-			<div class="tab-pane fade" id="auth-tab">
+			<!-- 權限 Tab -->
+			<div class="tab-pane fade" id="authorities-tab">
+				<button class="btn btn-primary mb-3" data-bs-toggle="modal" data-bs-target="#createAuthorityModal">新增權限</button>
 				<table class="table table-bordered" id="authority-table">
 					<thead>
 						<tr>
 							<th>權限名稱</th>
 							<th>描述</th>
+							<th>操作</th>
 						</tr>
 					</thead>
 					<tbody>
 						<tr th:each="authority : ${authorities}">
 							<td th:text="${authority.name}"></td>
 							<td th:text="${authority.description}"></td>
+							<td>
+								<button class="btn btn-warning btn-sm update-authority-btn" 
+									th:data-id="${authority.id}" 
+									th:data-name="${authority.name}" 
+									th:data-description="${authority.description}"
+									data-bs-toggle="modal"
+									data-bs-target="#updateAuthorityModal">
+									修改</button>
+								<button class="btn btn-danger btn-sm delete-authority-btn"
+									th:data-id="${authority.id}"
+									th:data-name="${authority.name}"
+									data-bs-toggle="modal" 
+									data-bs-target="#confirmDeleteAuthorityModal">
+									刪除</button>
+							</td>
 						</tr>
 					</tbody>
 				</table>
 			</div>
 		</div>
 	</div>
+
+	<!-- 新增用戶 Modal -->
+	<div class="modal fade" id="createUserModal" tabindex="-1">
+		<div class="modal-dialog">
+			<form id="createUserForm" class="modal-content" th:action="@{/admin/users/create}" method="post">
+				<div class="modal-header">
+					<h5 class="modal-title">新增用戶</h5>
+					<button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+				</div>
+				<div class="modal-body">
+					<div class="mb-3">
+						<label class="form-label">帳號</label>
+						<input type="text" class="form-control" name="username" required>
+					</div>
+					<div class="mb-3">
+						<label class="form-label">密碼</label>
+						<input type="password" class="form-control" name="password" required>
+					</div>
+					<div class="mb-3">
+						<label class="form-label">Email</label>
+						<input type="email" class="form-control" name="email" required>
+					</div>
+					<div class="mb-3">
+						<label class="form-label">角色</label>
+						<select class="form-select" name="roleIds" multiple>
+							<option th:each="role : ${roles}" th:value="${role.id}" th:text="${role.name}"></option>
+						</select>
+					</div>
+				</div>
+				<div class="modal-footer">
+					<button type="submit" class="btn btn-primary">儲存</button>
+				</div>
+			</form>
+		</div>
+	</div>
+	
+	<!-- 修改用戶 Modal -->
+	<div class="modal fade" id="updateUserModal" tabindex="-1">
+		<div class="modal-dialog">
+			<form id="updateUserForm" class="modal-content" th:action="@{/admin/users/update}" method="post">
+				<input type="hidden" name="id">
+				<div class="modal-header">
+					<h5 class="modal-title">修改用戶</h5>
+					<button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+				</div>
+				<div class="modal-body">
+					<div class="mb-3">
+						<label class="form-label">帳號</label>
+						<input type="text" class="form-control" name="username" required>
+					</div>
+					<div class="mb-3">
+						<label class="form-label">Email</label>
+						<input type="email" class="form-control" name="email" required>
+					</div>
+					<div class="mb-3">
+						<label class="form-label">角色</label>
+						<select class="form-select" name="roleIds" multiple>
+							<option th:each="role : ${roles}" th:value="${role.id}" th:text="${role.name}"></option>
+						</select>
+					</div>
+				</div>
+				<div class="modal-footer">
+					<button type="submit" class="btn btn-primary">更新</button>
+				</div>
+			</form>
+		</div>
+	</div>
+
+	<!-- 刪除用戶 Modal -->
+	<div class="modal fade" id="confirmDeleteUserModal" tabindex="-1">
+		<div class="modal-dialog">
+			<form id="deleteUserForm" class="modal-content" th:action="@{/admin/users/delete}" method="post">
+				<input type="hidden" name="id">
+				<div class="modal-header">
+					<h5 class="modal-title">確認刪除</h5>
+					<button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+				</div>
+				<div class="modal-body">
+					<p>你確定要刪除用戶 <strong id="delete-username"></strong> 嗎？</p>
+				</div>
+				<div class="modal-footer">
+					<button type="submit" class="btn btn-danger">確定刪除</button>
+					<button type="button" class="btn btn-secondary"
+						data-bs-dismiss="modal">取消</button>
+				</div>
+			</form>
+		</div>
+	</div>
+
+	<!-- 新增角色 Modal -->
+	<div class="modal fade" id="createRoleModal" tabindex="-1">
+		<div class="modal-dialog">
+			<form id="createRoleForm" class="modal-content" th:action="@{/admin/roles/create}" method="post">
+				<div class="modal-header">
+					<h5 class="modal-title">新增角色</h5>
+					<button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+				</div>
+				<div class="modal-body">
+					<div class="mb-3">
+						<label class="form-label">角色名稱</label>
+						<input type="text" class="form-control" name="name" required>
+					</div>
+					<div class="mb-3">
+						<label class="form-label">描述</label>
+						<textarea class="form-control" name="description"></textarea>
+					</div>
+					<div class="mb-3">
+						<label class="form-label">權限</label>
+						<select class="form-select" name="authorityIds" multiple>
+							<option th:each="auth : ${authorities}" th:value="${auth.id}" th:text="${auth.name}"></option>
+						</select>
+					</div>
+				</div>
+				<div class="modal-footer">
+					<button type="submit" class="btn btn-primary">儲存</button>
+				</div>
+			</form>
+		</div>
+	</div>
+
+	<!-- 修改角色 Modal -->
+	<div class="modal fade" id="updateRoleModal" tabindex="-1">
+		<div class="modal-dialog">
+			<form id="updateRoleForm" class="modal-content" th:action="@{/admin/roles/update}" method="post">
+				<input type="hidden" name="id">
+				<div class="modal-header">
+					<h5 class="modal-title">修改角色</h5>
+					<button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+				</div>
+				<div class="modal-body">
+					<div class="mb-3">
+						<label class="form-label">角色名稱</label>
+						<input type="text" class="form-control" name="name" required>
+					</div>
+					<div class="mb-3">
+						<label class="form-label">描述</label>
+						<textarea class="form-control" name="description"></textarea>
+					</div>
+					<div class="mb-3">
+						<label class="form-label">權限</label>
+						<select class="form-select" name="authorityIds" multiple>
+							<option th:each="auth : ${authorities}" th:value="${auth.id}" th:text="${auth.name}"></option>
+						</select>
+					</div>
+				</div>
+				<div class="modal-footer">
+					<button type="submit" class="btn btn-primary">更新</button>
+				</div>
+			</form>
+		</div>
+	</div>
+	
+	<!-- 刪除角色 Modal -->
+	<div class="modal fade" id="confirmDeleteRoleModal" tabindex="-1">
+		<div class="modal-dialog">
+			<form id="deleteRoleForm" class="modal-content" th:action="@{/admin/roles/delete}" method="post">
+				<input type="hidden" name="id">
+				<div class="modal-header">
+					<h5 class="modal-title">確認刪除</h5>
+					<button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+				</div>
+				<div class="modal-body">
+					<p>你確定要刪除角色 <strong id="delete-role-name"></strong> 嗎？</p>
+				</div>
+				<div class="modal-footer">
+					<button type="submit" class="btn btn-danger">確定刪除</button>
+					<button type="button" class="btn btn-secondary"
+						data-bs-dismiss="modal">取消</button>
+				</div>
+			</form>
+		</div>
+	</div>
+	
+	<!-- 新增權限 Modal -->
+	<div class="modal fade" id="createAuthorityModal" tabindex="-1">
+		<div class="modal-dialog">
+			<form id="createAuthorityForm" class="modal-content" th:action="@{/admin/authorities/create}" method="post">
+				<div class="modal-header">
+					<h5 class="modal-title">新增權限</h5>
+					<button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+				</div>
+				<div class="modal-body">
+					<div class="mb-3">
+						<label class="form-label">權限名稱</label>
+						<input type="text" class="form-control" name="name" required>
+					</div>
+					<div class="mb-3">
+						<label class="form-label">描述</label>
+						<textarea class="form-control" name="description"></textarea>
+					</div>
+				</div>
+				<div class="modal-footer">
+					<button type="submit" class="btn btn-primary">儲存</button>
+				</div>
+			</form>
+		</div>
+	</div>
+
+	<!-- 修改權限 Modal -->
+	<div class="modal fade" id="updateAuthorityModal" tabindex="-1">
+		<div class="modal-dialog">
+			<form id="updateAuthorityForm" class="modal-content" th:action="@{/admin/authorities/update}" method="post">
+				<input type="hidden" name="id">
+				<div class="modal-header">
+					<h5 class="modal-title">修改權限</h5>
+					<button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+				</div>
+				<div class="modal-body">
+					<div class="mb-3">
+						<label class="form-label">權限名稱</label>
+						<input type="text" class="form-control" name="name" required>
+					</div>
+					<div class="mb-3">
+						<label class="form-label">描述</label>
+						<textarea class="form-control" name="description"></textarea>
+					</div>
+				</div>
+				<div class="modal-footer">
+					<button type="submit" class="btn btn-primary">儲存</button>
+				</div>
+			</form>
+		</div>
+	</div>
+	
+	<!-- 刪除權限 Modal -->
+	<div class="modal fade" id="confirmDeleteAuthorityModal" tabindex="-1">
+		<div class="modal-dialog">
+			<form id="deleteAuthorityForm" class="modal-content" th:action="@{/admin/authorities/delete}" method="post">
+				<input type="hidden" name="id">
+				<div class="modal-header">
+					<h5 class="modal-title">確認刪除</h5>
+					<button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+				</div>
+				<div class="modal-body">
+					<p>你確定要刪除權限 <strong id="delete-authority-name"></strong> 嗎？</p>
+				</div>
+				<div class="modal-footer">
+					<button type="submit" class="btn btn-danger">確定刪除</button>
+					<button type="button" class="btn btn-secondary"
+						data-bs-dismiss="modal">取消</button>
+				</div>
+			</form>
+		</div>
+	</div>
+
+	<script>
+		// 發送新增用戶表單
+		$('#createUserForm').on('submit', function(e) {
+			e.preventDefault();
+			const formData = $(this).serialize();
+
+			$.post('/admin/users/create', formData).done(function() {
+				$('#createUserModal').modal('hide'); // 關閉 modal
+				loadSpaContainer('/admin-page'); // 重載 /admin-page
+			}).fail(function() {
+				alert('新增失敗，請檢查資料');
+			});
+		});
+
+		// 載入修改用戶表單
+		$(document).on('click', '.update-user-btn', function() {
+			const $btn = $(this);
+			const $modal = $('#updateUserModal');
+
+			const userId = $btn.data('id');
+			const username = $btn.data('username');
+			const email = $btn.data('email');
+			const roles = $btn.data('roles');
+
+			$modal.find('[name="id"]').val(userId);
+			$modal.find('[name="username"]').val(username);
+			$modal.find('[name="email"]').val(email);
+			$modal.find('[name="roles"]').val(roles);
+		});
+
+		// 發送修改用戶表單
+		$('#updateUserForm').on('submit', function(e) {
+			e.preventDefault();
+			const formData = $(this).serialize();
+
+			$.post('/admin/users/update', formData).done(function() {
+				$('#updateUserModal').modal('hide'); // 關閉 modal
+				loadSpaContainer('/admin-page'); // 重載 /admin-page
+			}).fail(function() {
+				alert('修改失敗，請檢查資料');
+			});
+		});
+
+		// 載入刪除用戶表單
+		$(function() {
+			$(document).on('click', '.delete-user-btn', function() {
+				const $btn = $(this);
+				const modal = $('#confirmDeleteUserModal');
+
+				const userId = $btn.data('id');
+				const username = $btn.data('username');
+
+				modal.find('input[name="id"]').val(userId);
+				modal.find('#delete-username').text(username);
+			});
+		});
+
+		// 發送刪除用戶表單
+		$('#deleteUserForm').on('submit', function(e) {
+			e.preventDefault();
+			const formData = $(this).serialize();
+
+			$.post('/admin/users/delete', formData).done(function() {
+				$('#confirmDeleteUserModal').modal('hide'); // 關閉 modal
+				loadSpaContainer('/admin-page'); // 重載 /admin-page
+			}).fail(function() {
+				alert('刪除失敗，請檢查資料');
+			});
+		});
+
+		// 發送新增角色表單
+		$('#createRoleForm').on('submit', function(e) {
+			e.preventDefault();
+			const formData = $(this).serialize();
+
+			$.post('/admin/roles/create', formData).done(function() {
+				$('#createRoleModal').modal('hide'); // 關閉 modal
+				loadSpaContainer('/admin-page#roles-tab'); // 重載 /admin-page
+			}).fail(function() {
+				alert('新增失敗，請檢查資料');
+			});
+		});
+
+		// 載入修改角色表單
+		$(document).on('click', '.update-role-btn', function() {
+			const $btn = $(this);
+			const $modal = $('#updateRoleModal');
+
+			const roleId = $btn.data('id');
+			const roleName = $btn.data('name');
+			const description = $btn.data('description');
+			const authorities = $btn.data('authorities');
+
+			$modal.find('[name="id"]').val(roleId);
+			$modal.find('[name="name"]').val(roleName);
+			$modal.find('[name="description"]').val(description);
+			$modal.find('[name="authorities"]').val(authorities);
+		});
+
+		// 發送修改角色表單
+		$('#updateRoleForm').on('submit', function(e) {
+			e.preventDefault();
+			const formData = $(this).serialize();
+
+			$.post('/admin/roles/update', formData).done(function() {
+				$('#updateRoleModal').modal('hide'); // 關閉 modal
+				loadSpaContainer('/admin-page#roles-tab'); // 重載 /admin-page
+			}).fail(function() {
+				alert('修改失敗，請檢查資料');
+			});
+		});
+		
+		// 載入刪除角色表單
+		$(function() {
+			$(document).on('click', '.delete-role-btn', function() {
+				const $btn = $(this);
+				const modal = $('#confirmDeleteRoleModal');
+
+				const roleId = $btn.data('id');
+				const roleName = $btn.data('name');
+
+				modal.find('input[name="id"]').val(roleId);
+				modal.find('#delete-role-name').text(roleName);
+			});
+		});
+
+		// 發送刪除角色表單
+		$('#deleteRoleForm').on('submit', function(e) {
+			e.preventDefault();
+			const formData = $(this).serialize();
+
+			$.post('/admin/roles/delete', formData).done(function() {
+				$('#confirmDeleteRoleModal').modal('hide'); // 關閉 modal
+				loadSpaContainer('/admin-page#roles-tab'); // 重載 /admin-page
+			}).fail(function() {
+				alert('刪除失敗，請檢查資料');
+			});
+		});
+		
+		// 發送新增權限表單
+		$('#createAuthorityForm').on('submit', function(e) {
+			e.preventDefault();
+			const formData = $(this).serialize();
+
+			$.post('/admin/authorities/create', formData).done(function() {
+				$('#createAuthorityModal').modal('hide'); // 關閉 modal
+				loadSpaContainer('/admin-page#authorities-tab'); // 重載 /admin-page
+			}).fail(function() {
+				alert('新增失敗，請檢查資料');
+			});
+		});
+
+		// 載入修改權限表單
+		$(document).on('click', '.update-authority-btn', function() {
+			const $btn = $(this);
+			const $modal = $('#updateAuthorityModal');
+
+			const authorityId = $btn.data('id');
+			const authorityName = $btn.data('name');
+			const description = $btn.data('description');
+
+			$modal.find('[name="id"]').val(authorityId);
+			$modal.find('[name="name"]').val(authorityName);
+			$modal.find('[name="description"]').val(description);
+		});
+
+		// 發送修改權限表單
+		$('#updateAuthorityForm').on('submit', function(e) {
+			e.preventDefault();
+			const formData = $(this).serialize();
+
+			$.post('/admin/authorities/update', formData).done(function() {
+				$('#updateAuthorityModal').modal('hide'); // 關閉 modal
+				loadSpaContainer('/admin-page#authorities-tab'); // 重載 /admin-page
+			}).fail(function() {
+				alert('修改失敗，請檢查資料');
+			});
+		});
+		
+		// 載入刪除權限表單
+		$(function() {
+			$(document).on('click', '.delete-authority-btn', function() {
+				const $btn = $(this);
+				const modal = $('#confirmDeleteAuthorityModal');
+
+				const authorityId = $btn.data('id');
+				const authorityName = $btn.data('name');
+
+				modal.find('input[name="id"]').val(authorityId);
+				modal.find('#delete-authority-name').text(authorityName);
+			});
+		});
+
+		// 發送刪除權限表單
+		$('#deleteAuthorityForm').on('submit', function(e) {
+			e.preventDefault();
+			const formData = $(this).serialize();
+
+			$.post('/admin/authorities/delete', formData).done(function() {
+				$('#confirmDeleteAuthorityModal').modal('hide'); // 關閉 modal
+				loadSpaContainer('/admin-page#authorities-tab'); // 重載 /admin-page
+			}).fail(function() {
+				alert('刪除失敗，請檢查資料');
+			});
+		});
+	</script>
 </body>
+</html>
