@@ -2,12 +2,14 @@ package com.niqdev.app.service;
 
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.oauth2.client.OAuth2AuthorizedClient;
 import org.springframework.security.oauth2.client.OAuth2AuthorizedClientService;
 import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
+import org.springframework.web.util.UriComponentsBuilder;
 
 import com.niqdev.app.converter.UserConverter;
 import com.niqdev.app.dto.PageResponse;
@@ -45,8 +47,23 @@ public class UserClientService {
 //	    	FindLicenseKeyRequest request = licenseKeyConverter.toFindLicenseKeyRequest(form);
 	    	ParameterizedTypeReference<PageResponse<UserDto>> typeRef = new ParameterizedTypeReference<>() {};
 
-	    	result = webClient.method(HttpMethod.GET)
-	                    .uri("http://localhost:8081/api/admin/users/search")
+	    	UriComponentsBuilder uriBuilder = UriComponentsBuilder
+	    			.fromUriString("http://localhost:8081/api/admin/users/search");
+	    	
+	    	if (pageable != null) {
+	    		uriBuilder
+	    			.queryParam("page", pageable.getPageNumber())
+	    			.queryParam("size", pageable.getPageSize());
+		    	
+		    	for (Sort.Order order : pageable.getSort()) {
+		    	    uriBuilder.queryParam("sort", order.getProperty() + "," + order.getDirection());
+		    	}
+	    	}
+	    	
+	    	String uri = uriBuilder.toUriString();
+	    	
+	    	result = webClient.method(HttpMethod.POST)
+	                    .uri(uri)
 	                    .header("Authorization", "Bearer " + accessToken)
 	                    .bodyValue(criteria)
 	                    .retrieve()
@@ -129,7 +146,31 @@ public class UserClientService {
 	    	DeleteUserRequest request = userConverter.toDeleteUserRequest(formData);
 
 	    	webClient.delete()
-	                    .uri("http://localhost:8081/api/admin/users/{id}", request.getId())
+	                    .uri("http://localhost:8081/api/admin/users/{ids}", request.getId())
+	                    .header("Authorization", "Bearer " + accessToken)
+	                    .retrieve()
+	                    .onStatus(
+	                            status -> status.is4xxClientError() || status.is5xxServerError(), 
+	                            WebClientErrorHandler::handleResponseError
+	                        )
+	                    .bodyToMono(UserDto.class)
+	                    .block();
+    	}
+	}
+	
+	public void deleteUsers(OAuth2AuthenticationToken authentication, DeleteUserForm formData) {
+    	OAuth2AuthorizedClient client = null;
+    	
+    	if (authentication != null) {
+    		client = authorizedClientService.loadAuthorizedClient("my-client", authentication.getName());
+    	}
+    	
+    	if (client != null) {
+	    	String accessToken = client.getAccessToken().getTokenValue();
+	    	DeleteUserRequest request = userConverter.toDeleteUserRequest(formData);
+
+	    	webClient.delete()
+	                    .uri("http://localhost:8081/api/admin/users/batch/{ids}", request.getIds())
 	                    .header("Authorization", "Bearer " + accessToken)
 	                    .retrieve()
 	                    .onStatus(

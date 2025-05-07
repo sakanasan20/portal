@@ -1,0 +1,433 @@
+<!DOCTYPE html>
+<html lang="zh-Hant" xmlns:th="http://www.thymeleaf.org"
+	xmlns:sec="https://www.thymeleaf.org/extras/spring-security">
+<body>
+	<div class="container my-5">
+		<div class="d-flex justify-content-between align-items-center mb-4">
+			<h2>系統管理</h2>
+			<button class="btn btn-secondary mb-3 back-home-btn">
+				<i class="bi bi-arrow-left"></i> 返回首頁
+			</button>
+		</div>
+		<ul class="nav nav-tabs mb-3" id="adminTabs" role="tablist">
+			<li class="nav-item" role="presentation">
+				<button class="nav-link active" data-bs-toggle="tab"
+					data-bs-target="#users-tab" type="button">用戶</button>
+			</li>
+			<li class="nav-item" role="presentation">
+				<button class="nav-link" data-bs-toggle="tab"
+					data-bs-target="#roles-tab" type="button">角色</button>
+			</li>
+			<li class="nav-item" role="presentation">
+				<button class="nav-link" data-bs-toggle="tab"
+					data-bs-target="#authorities-tab" type="button">權限</button>
+			</li>
+		</ul>
+
+		<div class="tab-content">
+			<!-- 用戶 Tab -->
+			<div class="tab-pane fade show active" id="users-tab">
+				<div id="toolbar">
+					<button id="create-user-btn" class="btn btn-primary"
+						data-bs-toggle="modal" data-bs-target="#create-user-modal">
+						<i class="bi bi-plus-square"></i> 新增用戶
+					</button>
+					<button id="confirm-delete-users-btn" class="btn btn-danger"
+						disabled>
+						<i class="bi bi-trash"></i> 刪除用戶
+					</button>
+				</div>
+				<table id="user-table"></table>
+			</div>
+
+			<!-- 角色 Tab -->
+			<div class="tab-pane fade" id="roles-tab">
+				
+			</div>
+
+			<!-- 權限 Tab -->
+			<div class="tab-pane fade" id="authorities-tab">
+				
+			</div>
+		</div>
+	</div>
+
+	<!-- 新增用戶 Modal -->
+	<div class="modal fade" id="create-user-modal" tabindex="-1">
+		<div class="modal-dialog">
+			<form id="create-user-form" class="modal-content" 
+				th:action="@{/admin/users/create}" method="post">
+				<div class="modal-header">
+					<h5 class="modal-title">新增用戶</h5>
+					<button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+				</div>
+				<div class="modal-body">
+					<div class="mb-3">
+						<label class="form-label">帳號</label> <input type="text"
+							class="form-control" name="username" required>
+					</div>
+					<div class="mb-3">
+						<label class="form-label">密碼</label> <input type="password"
+							class="form-control" name="password" required>
+					</div>
+					<div class="mb-3">
+						<label class="form-label">Email</label> <input type="email"
+							class="form-control" name="email" required>
+					</div>
+				</div>
+				<div class="modal-footer">
+					<button type="submit" class="btn btn-primary">儲存</button>
+				</div>
+			</form>
+		</div>
+	</div>
+
+	<!-- 修改用戶 Modal -->
+	<div class="modal fade" id="update-user-modal" tabindex="-1">
+		<div class="modal-dialog">
+			<form id="update-user-form" class="modal-content" 
+				th:action="@{/admin/users/update}"method="post">
+				<input type="hidden" name="id">
+				<div class="modal-header">
+					<h5 class="modal-title">修改用戶</h5>
+					<button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+				</div>
+				<div class="modal-body">
+					<div class="mb-3">
+						<label class="form-label">帳號</label> <input type="text"
+							class="form-control" name="username" required>
+					</div>
+					<div class="mb-3">
+						<label class="form-label">Email</label> <input type="email"
+							class="form-control" name="email" required>
+					</div>
+					<div class="mb-3">
+						<label class="form-label">角色</label> <select class="form-select"
+							name="roleIds" multiple>
+							<option th:each="role : ${roles}" th:value="${role.id}"
+								th:text="${role.name}"></option>
+						</select>
+					</div>
+				</div>
+				<div class="modal-footer">
+					<button type="submit" class="btn btn-primary">更新</button>
+				</div>
+			</form>
+		</div>
+	</div>
+
+	<!-- 刪除用戶 Modal -->
+	<div class="modal fade" id="confirm-delete-user-modal" tabindex="-1">
+		<div class="modal-dialog">
+			<form id="delete-user-form" class="modal-content"
+				th:action="@{/admin/users/delete}" method="post">
+				<input type="hidden" name="id">
+				<div class="modal-header">
+					<h5 class="modal-title">確認刪除</h5>
+					<button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+				</div>
+				<div class="modal-body">
+					<p>
+						你確定要刪除用戶 <strong id="delete-username"></strong> 嗎？
+					</p>
+				</div>
+				<div class="modal-footer">
+					<button type="submit" class="btn btn-danger">確定刪除</button>
+					<button type="button" class="btn btn-secondary"
+						data-bs-dismiss="modal">取消</button>
+				</div>
+			</form>
+		</div>
+	</div>
+	
+		<!-- 刪除用戶 Modal -->
+	<div class="modal fade" id="confirm-delete-users-modal" tabindex="-1">
+		<div class="modal-dialog">
+			<form id="delete-users-form" class="modal-content"
+				th:action="@{/admin/users/delete/batch}" method="post">
+				<input type="hidden" name="ids">
+				<div class="modal-header">
+					<h5 class="modal-title">確認刪除</h5>
+					<button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+				</div>
+				<div class="modal-body">
+					<p>
+						你確定要刪除用戶 <strong id="delete-usernames"></strong> 嗎？
+					</p>
+				</div>
+				<div class="modal-footer">
+					<button type="submit" class="btn btn-danger">確定刪除</button>
+					<button type="button" class="btn btn-secondary"
+						data-bs-dismiss="modal">取消</button>
+				</div>
+			</form>
+		</div>
+	</div>
+
+	<script>
+		if (!window.tableInitialized) {
+		    window.tableInitialized = true;
+		    
+		    const initUserTable = function() {
+				const $table = $('#user-table');
+				const $update = $('#update-user-btn');
+				const $deleteSelected = $('#confirm-delete-users-btn');
+				let selections = [];
+		
+				function getIdSelections() {
+					return $.map($table.bootstrapTable('getSelections'), function(row) {
+						return row.id
+					})
+				};
+				
+				function getUsernameSelections() {
+					return $.map($table.bootstrapTable('getSelections'), function(row) {
+						return row.username
+					})
+				};
+				
+				// 綁定操作項目
+				function operateFormatter () {
+					return [
+						// Like
+						'<a class="like" href="javascript:void(0)" title="Like">',
+						'<i class="bi bi-heart"></i>',
+						'</a>  ',
+						// 修改
+						'<button class="btn btn-sm update-user-btn me-1 p-0"',
+						'	data-bs-toggle="modal" ',
+						'	data-bs-target="#update-user-modal">',
+						'	<i class="bi bi-pencil-square"></i>  ', 
+						'</button>',
+						// 刪除
+						'<button class="btn btn-sm confirm-delete-user-btn me-1 p-0"', 
+						'	data-bs-toggle="modal" ', 
+						'	data-bs-target="#confirm-delete-user-modal">', 
+						'	<i class="bi bi-trash"></i>', 
+						'</button>  ', 
+					].join('');
+				}
+				
+				// 處裡 API 回應
+				delete window.responseHandler;
+				window.responseHandler = res => {
+					const total = res.totalElements
+					const rows =  res.content
+					
+					$.each(rows, function (i, row) { 
+						row.state = $.inArray(row.id, selections) !== -1 
+					})
+		
+					return {
+						total : total, // 對應 PageResponse 的 totalElements
+						rows : rows, // 對應 PageResponse 的 content
+					};
+				};
+				
+				// 處理明細格式
+				delete window.detailFormatter;
+				window.detailFormatter = (index, row) => {
+					const html = []
+		
+					$.each(row, function(key, value) {
+						html.push(`<p><b>${key}:</b> ${value}</p>`)
+					})
+					
+					return html.join('');
+				}
+				
+				// 綁定操作觸發事件
+				delete window.operateEvents;
+				window.operateEvents = {
+					'click .update-user-btn' (e, value, row) {							
+						const $modal = $('#update-user-modal');
+		
+						const userId = row.id;
+						const username = row.username;
+						const email = row.email;
+						const roles = row.roles;
+		
+						$modal.find('[name="id"]').val(userId);
+						$modal.find('[name="username"]').val(username);
+						$modal.find('[name="email"]').val(email);
+						$modal.find('[name="roles"]').val(roles);
+					},
+					'click .like' (e, value, row) {
+						alert(`You click like action, row: ${JSON.stringify(row)}`);
+					},
+					'click .confirm-delete-user-btn' (e, value, row) {
+						const $modal = $('#confirm-delete-user-modal');
+		
+						const userId = row.id;
+						const username = row.username;
+		
+						$modal.find('input[name="id"]').val(userId);
+						$modal.find('#delete-username').text(username);
+						
+						//$table.bootstrapTable('remove', {
+						//	field: 'id',
+						//	values: [row.id]
+						//});
+					}
+				}
+				
+				function initTable () {
+					$table.bootstrapTable('destroy').bootstrapTable({
+					    url: '/admin/users/search',
+					    pagination: true,
+					    sidePagination: 'server',
+					    pageList: [10, 25, 50, 100, 'all'],
+					    responseHandler: responseHandler,
+					    toolbar: '#toolbar',
+					    showRefresh: true,
+					    showToggle: true,
+					    showFullscreen: true,
+					    showColumns: true,
+					    showColumnsToggleAll: true,
+					    search: true, 
+					    detailView: true,
+					    showExport: true,
+					    clickToSelect: true,
+					    detailFormatter: detailFormatter,
+					    minimumCountColumns: 2,
+					    showPaginationSwitch: true,
+					    idField: 'id',
+						columns: [
+							{
+								field: 'state',
+								checkbox: true,
+								align: 'center',
+								valign: 'middle'
+							},
+							{
+								field: 'id',
+								title: 'ID',
+								sortable: true, 
+								align: 'center',
+								valign: 'middle'
+							},
+							{
+								field: 'username',
+								title: 'Username',
+								sortable: true,
+								align: 'center'
+							},
+							{
+								field: 'email',
+								title: 'Email',
+								sortable: true,
+								align: 'center'
+							},
+							{
+								field: 'operate',
+								title: 'Operate',
+								clickToSelect: false,
+								align: 'center',
+								events: window.operateEvents,
+								formatter: operateFormatter
+							}
+						]
+					});
+				}
+				
+				$table.off('check.bs.table uncheck.bs.table check-all.bs.table uncheck-all.bs.table')
+					.on('check.bs.table uncheck.bs.table check-all.bs.table uncheck-all.bs.table', function () {
+					$deleteSelected.prop('disabled', !$table.bootstrapTable('getSelections').length)
+					
+					// save your data, here just save the current page
+					selections = getIdSelections()
+					// push or splice the selections if you want to save all data selections
+				});
+		
+				$table.off('all.bs.table').on('all.bs.table', function (e, name, args) {
+					// console.log(name, args)
+				});
+
+				// 刪除已選
+				$deleteSelected.click(function () {
+					const ids = getIdSelections().join(',')
+					const usernames = getUsernameSelections()
+					const $modal = $('#confirm-delete-users-modal');
+					console.log('ids', ids)
+					console.log('usernames', usernames)
+					$modal.find('input[name="ids"]').val(ids);
+					$modal.find('#delete-usernames').text(usernames);
+					
+					$modal.modal('show');
+					
+					//$table.bootstrapTable('remove', {
+					//	field: 'id',
+					//	values: ids
+					//})
+					//$deleteSelected.prop('disabled', true)
+				});
+				
+				initTable();
+			}
+		    
+		    // 初始 User Table
+	    	initUserTable();
+	    	
+	    	// 發送新增用戶表單
+			$('#create-user-form').on('submit', function(e) {
+				e.preventDefault();
+				const formData = $(this).serialize();
+
+				$.post('/admin/users/create', formData).done(function() {
+					$('#create-user-modal').modal('hide'); // 關閉 modal
+					loadSpaContainer('/iam-page#users-tab', function () {
+						initUserTable(); // 重載成功後再初始化表格 
+					});
+				}).fail(function() {
+					alert('新增失敗，請檢查資料');
+				});
+			});
+	    	
+			// 發送修改用戶表單
+			$('#update-user-form').on('submit', function(e) {
+				e.preventDefault();
+				const formData = $(this).serialize();
+
+				$.post('/admin/users/update', formData).done(function() {
+					$('#update-user-modal').modal('hide'); // 關閉 modal
+					loadSpaContainer('/iam-page#users-tab', function () {
+						initUserTable(); // 重載成功後再初始化表格 
+					});
+				}).fail(function() {
+					alert('修改失敗，請檢查資料');
+				});
+			});
+	    	
+			// 發送刪除用戶表單
+			$('#delete-user-form').on('submit', function(e) {
+				e.preventDefault();
+				const formData = $(this).serialize();
+
+				$.post('/admin/users/delete', formData).done(function() {
+					$('#confirm-delete-user-modal').modal('hide'); // 關閉 modal
+					loadSpaContainer('/iam-page#users-tab', function () {
+						initUserTable(); // 重載成功後再初始化表格 
+					});
+				}).fail(function() {
+					alert('刪除失敗，請檢查資料');
+				});
+			});
+			
+			// 發送刪除多筆用戶表單
+			$('#delete-users-form').on('submit', function(e) {
+				e.preventDefault();
+				const formData = $(this).serialize();
+
+				$.post('/admin/users/delete/batch', formData).done(function() {
+					$('#confirm-delete-users-modal').modal('hide'); // 關閉 modal
+					loadSpaContainer('/iam-page#users-tab', function () {
+						initUserTable(); // 重載成功後再初始化表格 
+					});
+				}).fail(function() {
+					alert('刪除失敗，請檢查資料');
+				});
+			});
+		}
+	</script>
+</body>
+</html>

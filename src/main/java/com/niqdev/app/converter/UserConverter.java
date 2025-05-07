@@ -45,7 +45,10 @@ public class UserConverter {
 
 	public DeleteUserRequest toDeleteUserRequest(DeleteUserForm formData) {
     	return DeleteUserRequest.builder()
-    			.id(Long.parseLong(formData.getId()))
+    			.id(formData.getId() != null 
+    					? Long.parseLong(formData.getId())
+    					: null)
+    			.ids(formData.getIds())
                 .username(formData.getUsername())
     			.build();
 	}

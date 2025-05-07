@@ -55,6 +55,20 @@ public class AdminController {
         return "admin";
     }
     
+    @GetMapping("/iam-page")
+    public String iamPage(Model model, OAuth2AuthenticationToken authentication) {
+//    	PageResponse<UserDto> usersPage = userClientService.searchUsers(authentication, new UserSearchCriteria(), null);
+    	PageResponse<RoleDto> rolesPage = roleClientService.searchRoles(authentication, new RoleSearchCriteria(), null);
+//    	PageResponse<AuthorityDto> authoritiesPage = authorityClientService.searchAuthorities(authentication, new AuthoritySearchCriteria(), null);
+//    	List<UserDto> users = usersPage.getContent();
+    	List<RoleDto> roles = rolesPage.getContent();
+//    	List<AuthorityDto> authorities = authoritiesPage.getContent();
+//    	model.addAttribute("users", users);
+    	model.addAttribute("roles", roles);
+//    	model.addAttribute("authorities", authorities);
+        return "iam";
+    }
+    
     @PostMapping("/admin/users/create")
     public String createUser(Model model, OAuth2AuthenticationToken authentication, @ModelAttribute CreateUserForm formData) {
         UserDto user = userClientService.createUser(authentication, formData);
@@ -73,6 +87,13 @@ public class AdminController {
     public String deleteUser(Model model, OAuth2AuthenticationToken authentication, @ModelAttribute DeleteUserForm formData) {
         userClientService.deleteUser(authentication, formData);
         log.info("Deleted User: " + formData.getId());
+        return "redirect:/";
+    }
+    
+    @PostMapping("/admin/users/delete/batch")
+    public String deleteUsers(Model model, OAuth2AuthenticationToken authentication, @ModelAttribute DeleteUserForm formData) {
+        userClientService.deleteUsers(authentication, formData);
+        log.info("Deleted Users: " + formData.getIds());
         return "redirect:/";
     }
     
